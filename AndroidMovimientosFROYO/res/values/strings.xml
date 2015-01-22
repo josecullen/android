@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">AndroidMovimientos</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="valores_en_reposo">Valores en Reposo</string>
+	<string name="valores_en_movimiento">Valores en movimiento</string>
+
+</resources>

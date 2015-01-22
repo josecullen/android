@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="10dp" >
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="20dp"
+        android:stretchColumns="1" >
+
+        <TableRow>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/valores_en_reposo"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/txtReposoX"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="x = "
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/txtReposoY"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="y = "
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/txtReposoZ"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="z = "
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/txtVelocity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:text="KM"
+                    android:textSize="24sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/valores_en_movimiento"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/txtMovimientoX"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="x = "
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/txtMovimientoY"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="y = "
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/txtMovimientoZ"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="z = "
+                    android:textSize="12sp" />
+            </LinearLayout>
+        </TableRow>
+    </TableLayout>
+
+    <SeekBar
+        android:id="@+id/seekVisualizacion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="100" />
+
+    <TableLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingBottom="20dp"
+        android:stretchColumns="1" >
+
+        <TableRow>
+
+            <ImageButton
+               	android:id="@+id/arrowLeft"
+                android:layout_width="50dp"
+                android:layout_height="50dp"                
+                android:alpha="0.3" 
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:src="@drawable/left" />
+
+            <ImageButton
+                android:id="@+id/arrowForward"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:alpha="0.3"
+                android:background="@android:color/transparent"
+                android:src="@drawable/arrowforward" />
+
+<!--             <ImageButton -->
+<!--                 android:layout_width="50dp" -->
+<!--                 android:layout_height="50dp" -->
+<!--                 android:layout_weight="1" -->
+<!--                 android:alpha="0.3" -->
+<!--                 android:background="@android:color/transparent" -->
+<!--                 android:src="@drawable/arrowback" /> -->
+
+            <ImageButton
+                android:id="@+id/arrowRight"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:alpha="0.3"
+                android:background="@android:color/transparent"
+                android:src="@drawable/arrowright" />
+        </TableRow>
+    </TableLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="bottom"
+        android:orientation="horizontal" >
+
+        <ImageButton
+            android:id="@+id/btnPlay"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:onClick="play"
+            android:src="@drawable/play" />
+
+        <ImageButton
+            android:id="@+id/btnStop"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:onClick="stop"
+            android:src="@drawable/stop" />
+
+        <ImageButton
+            android:id="@+id/btnFilter"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:onClick="filter"
+            android:src="@drawable/filter" />
+
+        <TextView            
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:paddingLeft="40dp"
+            android:text="Millis" />
+
+        <EditText
+            android:id="@+id/txtMillis"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:ems="3"
+            android:inputType="number" >
+
+            <requestFocus />
+        </EditText>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:paddingLeft="40dp"
+            android:text="Threshold" />
+
+        <EditText
+            android:id="@+id/txtThreshold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:ems="3"
+            android:inputType="numberDecimal" >
+        </EditText>
+        
+        
+    </LinearLayout>
+
+</LinearLayout>

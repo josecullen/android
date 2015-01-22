@@ -1,0 +1,152 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.example.androidmovimientos.MainActivity" >
+
+    <TextView
+        android:id="@+id/txtReposo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/TextView01"
+        android:layout_alignBottom="@+id/TextView01"
+        android:layout_toLeftOf="@+id/btnFilter"
+        android:text="Small Text"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <TextView
+        android:id="@+id/txtActividad"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/textView1"
+        android:layout_alignBottom="@+id/textView1"
+        android:layout_toLeftOf="@+id/btnFilter"
+        android:text="Small Text"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <SeekBar
+        android:id="@+id/seekVisualizacion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/textView1"
+        android:layout_centerVertical="true"
+        android:max="100" />
+
+    <Button
+        android:id="@+id/btnPlay"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:text="Play"
+        android:onClick="play" />
+
+    <Button
+        android:id="@+id/btnStop"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/btnPlay"
+        android:layout_alignBottom="@+id/btnPlay"
+        android:layout_toRightOf="@+id/btnPlay"
+        android:text="Stop"
+        android:onClick="stop" />
+
+    <Button
+        android:id="@+id/btnRec"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/btnReplay"
+        android:layout_alignBottom="@+id/btnReplay"
+        android:layout_toLeftOf="@+id/btnReplay"
+        android:text="Rec"
+        android:onClick="rec" />
+
+    <Button
+        android:id="@+id/btnReplay"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/btnFilter"
+        android:layout_alignBottom="@+id/btnFilter"
+        android:layout_alignRight="@+id/txtActividad"
+        android:text="Replay" />
+
+    <Button
+        android:id="@+id/btnFilter"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/btnStop"
+        android:layout_alignBottom="@+id/btnStop"
+        android:layout_alignRight="@+id/seekVisualizacion"
+        android:text="Filter"
+        android:onClick="filter" />
+
+    <Button
+        android:id="@+id/btnAddMillis"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/seekVisualizacion"
+        android:layout_below="@+id/seekVisualizacion"
+        android:layout_marginTop="41dp"
+        android:text="+ Millis"
+        android:onClick="addMillis" />
+
+    <Button
+        android:id="@+id/btnMinusMillis"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/btnAddMillis"
+        android:layout_below="@+id/btnAddMillis"
+        android:text="- Millis"
+        android:onClick="minusMillis" />
+
+    <Button
+        android:id="@+id/btnAddThreshold"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/btnMinusMillis"
+        android:layout_toRightOf="@+id/btnAddMillis"
+        android:text="+ Threshold"
+        android:onClick="addThreshold" />
+
+    <Button
+        android:id="@+id/btnMinusThreshold"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/btnMinusMillis"
+        android:layout_alignBottom="@+id/btnMinusMillis"
+        android:layout_toRightOf="@+id/btnAddMillis"
+        android:text="- Threshold"
+        android:onClick="minusThreshold" />
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/TextView01"
+        android:layout_below="@+id/TextView01"
+        android:text="Valores en actividad"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <TextView
+        android:id="@+id/TextView01"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/btnPlay"
+        android:layout_alignParentTop="true"
+        android:text="Valores en reposo"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+</RelativeLayout>
