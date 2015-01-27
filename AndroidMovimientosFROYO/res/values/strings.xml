@@ -6,5 +6,7 @@
     <string name="action_settings">Settings</string>
     <string name="valores_en_reposo">Valores en Reposo</string>
 	<string name="valores_en_movimiento">Valores en movimiento</string>
-
+	<string name="btn_bluetooth">Bluetooth</string>
+	<string name="dialog_not_have_bluetooth">Su dispositivo no cuenta con Bluetooth</string>
+	<string name="dialog_bluetooth_error">Ocurrió un error mientras se intentaba conectar a Bluetooth</string>
 </resources>

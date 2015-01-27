@@ -1,25 +1,37 @@
 package com.example.androidmovimientos;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Set;
+import java.util.UUID;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.DialogInterface.OnClickListener;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.sensor.Action;
 import com.sensor.SensorHelper;
 
@@ -27,6 +39,15 @@ public class MainActivity extends Activity {
 	private static final int REQUEST_ENABLE_BT = 1;
 	SensorHelper sensorHelper;
 	SeekBar seekVisualizacion;
+	
+	
+	ArrayAdapter<String> mArrayAdapter;
+	BluetoothAdapter mBluetoothAdapter;
+	BluetoothSocket btSocket;
+	ArrayList<BluetoothDevice> btDeviceArray = new ArrayList<BluetoothDevice>();
+	Set<BluetoothDevice> pairedDevices;
+	ConnectAsyncTask connectAsyncTask;
+	
 	float 
 		leftArrowThreshold = -0.5f, 
 		rightArrowThreshold = 0.5f, 
@@ -49,18 +70,37 @@ public class MainActivity extends Activity {
 		arrowLeft,
 		arrowForward,
 		arrowRight;
-	
-	BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-	
-	
+	int count = 1;
+
 	DecimalFormat df = new DecimalFormat("##.#");
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.second_activity);
+		setContentView(R.layout.second_activity);	
 		
-		
+		mArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
+		mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+		connectAsyncTask = new ConnectAsyncTask();
+
+		if (mBluetoothAdapter == null) {
+		    Toast.makeText(this, "El dispositivo no soporta Bluetooth", Toast.LENGTH_LONG).show();
+		}else{
+			if(!mBluetoothAdapter.isEnabled()){
+				Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+				startActivityForResult(enableBtIntent, 1);
+			}		
+			
+			pairedDevices = mBluetoothAdapter.getBondedDevices();
+			if (pairedDevices.size() > 0) {
+			    // Loop a través de los dispositivos vinculados.
+			    for (BluetoothDevice device : pairedDevices) {
+			        // Agrega el nombre y la dirección a un ArrayAdapter para luego mostrarlo en una ListView.
+			        mArrayAdapter.add(device.getName() + "\n" + device.getAddress());
+			        btDeviceArray.add(device);
+			    }
+			}
+		}		
 		
 		txtReposoX = (TextView)findViewById(R.id.txtReposoX);
 		txtReposoY = (TextView)findViewById(R.id.txtReposoY);
@@ -74,16 +114,14 @@ public class MainActivity extends Activity {
 		
 		arrowForward = (ImageButton)findViewById(R.id.arrowForward);
 		arrowLeft = (ImageButton)findViewById(R.id.arrowLeft);
-		arrowRight = (ImageButton)findViewById(R.id.arrowRight);
-		
+		arrowRight = (ImageButton)findViewById(R.id.arrowRight);		
 		
 		seekVisualizacion = (SeekBar)findViewById(R.id.seekVisualizacion);		
 		seekVisualizacion.setProgress(50);
 
-		
 		sensorHelper = new SensorHelper((SensorManager) getSystemService(Context.SENSOR_SERVICE));
 		sensorHelper
-			.setMillis(100)
+			.setMillis(200)
 			.setSensor(Sensor.TYPE_ACCELEROMETER)
 			.setAction(new Action() {				
 				@Override
@@ -102,17 +140,23 @@ public class MainActivity extends Activity {
 							velocity = velocity  + 10;
 						}
 						txtVelocity.setText(df.format(velocity));
-					}
-					
+					}			
 					
 					txtReposoX.setText(df.format(sensorHelper.filter.filterX));
 					txtReposoY.setText(df.format(sensorHelper.filter.filterY));
 					txtReposoZ.setText(df.format(sensorHelper.filter.filterZ));
 							
 					setArrows();
+					sendMessage(
+							"x"+df.format(sensorHelper.getX())+","+
+							"y"+df.format(sensorHelper.getY())+","+
+							"z"+df.format(sensorHelper.getZ())+"_"											
+					);
+
 				}
 				
-				@SuppressLint("NewApi") void setArrows(){
+				@SuppressWarnings("deprecation") @SuppressLint("NewApi") 
+				void setArrows(){
 					if(Build.VERSION.SDK_INT == Build.VERSION_CODES.FROYO){
 						if(sensorHelper.getY() < leftArrowThreshold)arrowLeft.setAlpha(255);
 						else arrowLeft.setAlpha(100);
@@ -127,10 +171,37 @@ public class MainActivity extends Activity {
 						else arrowRight.setAlpha(.5f);
 						if(sensorHelper.getX() < forwardArrowThreshold) arrowForward.setAlpha(1.0f);
 						else arrowForward.setAlpha(.5f);
-
 					}	
 				}
-			}).play();
+				
+			});	
+	}
+	
+	@Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+    	switch (resultCode) {
+		case RESULT_OK:
+			pairedDevices = mBluetoothAdapter.getBondedDevices();
+			if (pairedDevices.size() > 0) {
+			    for (BluetoothDevice device : pairedDevices) {
+			        mArrayAdapter.add(device.getName() + "\n" + device.getAddress());
+			    }
+			}
+			break;
+		case RESULT_CANCELED:
+			AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+			dialog.setMessage(R.string.dialog_bluetooth_error);
+			dialog.show();
+			break;
+		
+		default:
+			break;
+		}
+    }
+	
+	public void selectBluetooth(View view){
+		AlertDialog.Builder dialog = getBluetoothDialog();
+		dialog.show();
 	}
 
 	public void filter(View view){	sensorHelper.filter.filter();	}
@@ -146,7 +217,6 @@ public class MainActivity extends Activity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
-//		this.invalidateOptionsMenu();
 		return true;
 	}
 
@@ -162,20 +232,70 @@ public class MainActivity extends Activity {
 		return super.onOptionsItemSelected(item);
 	}
 
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-		if (mBluetoothAdapter == null) {
-			System.out.println("NO BLUETOOTH");
-		}else{
-			if (!mBluetoothAdapter.isEnabled()) {
-				System.out.println("YES BLUETOOTH");
-
-			    Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-			    startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+	
+	public AlertDialog.Builder getBluetoothDialog(){
+		AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+		dialog.setAdapter(mArrayAdapter, new OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				BluetoothDevice device = btDeviceArray.get(which);
+				connectAsyncTask.execute(device);
 			}
-		}
+		});		
+		return dialog;
 	}
 	
+	public boolean sendMessage(String message){
+		System.out.println("log - sendMessage : "+message);
+		OutputStream mmOutStream = null;
+		
+		try {
+			if(btSocket == null){
+				System.out.println("log - socket null");
+				return false;
+			}			
+			if(btSocket.getRemoteDevice() != null){
+				mmOutStream = btSocket.getOutputStream();
+				mmOutStream.write(message.getBytes());
+				return true;
+			}else{
+				System.out.println("log - remoteDevice null");
+			}
+			
+		} catch (IOException e) { 
+			System.out.println("log - sendMessage ERROR : "+e.getMessage());				
+		}
+		return false;
+	}
+	
+	class ConnectAsyncTask extends AsyncTask<BluetoothDevice, Integer, BluetoothSocket>{
+		private BluetoothSocket mmSocket;
+		private BluetoothDevice mmDevice;
+		
+		@Override
+		protected BluetoothSocket doInBackground(BluetoothDevice... device) {
+							
+			mmDevice = device[0];			
+			try {				
+				String mmUUID = "00001101-0000-1000-8000-00805F9B34FB";
+				mmSocket = mmDevice.createRfcommSocketToServiceRecord(UUID.fromString(mmUUID));
+				mmSocket.connect();
+				
+			} catch (Exception e) {
+				System.out.println(e.getMessage());				
+			}			
+			return mmSocket;
+		}
+		
+		@Override
+		protected void onPostExecute(BluetoothSocket result) {			
+			btSocket = result;
+		}		
+	}
 
 }
+
+
+
+
