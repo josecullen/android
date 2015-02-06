@@ -14,6 +14,7 @@ import android.app.Dialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -82,8 +83,8 @@ public class MainActivity extends Activity {
 		mArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
 		mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 		connectAsyncTask = new ConnectAsyncTask();
-
-		if (mBluetoothAdapter == null) {
+		
+		if (mBluetoothAdapter == null) { 
 		    Toast.makeText(this, "El dispositivo no soporta Bluetooth", Toast.LENGTH_LONG).show();
 		}else{
 			if(!mBluetoothAdapter.isEnabled()){
@@ -175,7 +176,23 @@ public class MainActivity extends Activity {
 				}
 				
 			});	
+		
+		
 	}
+	
+	private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        public void onReceive (Context context, Intent intent) {
+            String action = intent.getAction();
+
+            if (BluetoothAdapter.ACTION_STATE_CHANGED.equals(action)) {
+                if(intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, -1) == BluetoothAdapter.STATE_OFF){
+//                 	Bluetooth is disconnected
+                	System.out.println("DESCONECTADO");
+                }              	
+                	
+            }
+        }
+	};
 	
 	@Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
