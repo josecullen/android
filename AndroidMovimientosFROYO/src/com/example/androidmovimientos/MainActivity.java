@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -24,6 +25,7 @@ import android.hardware.SensorManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.ParcelUuid;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -111,6 +113,8 @@ public class MainActivity extends Activity {
 		txtMovimientoZ =  (TextView)findViewById(R.id.txtMovimientoZ);
 		txtVelocity =  (TextView)findViewById(R.id.txtVelocity);
 
+		txtReposoX.setText("version 0.0.5");
+		
 		txtMillis = (EditText)findViewById(R.id.txtMillis);
 		
 		arrowForward = (ImageButton)findViewById(R.id.arrowForward);
@@ -216,7 +220,14 @@ public class MainActivity extends Activity {
 		}
     }
 	
-	public void selectBluetooth(View view){
+	public void selectBluetooth(View view) {
+		if(mmSocket != null){
+			try {
+				mmSocket.close();				
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 		AlertDialog.Builder dialog = getBluetoothDialog();
 		dialog.show();
 	}
@@ -257,6 +268,7 @@ public class MainActivity extends Activity {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				BluetoothDevice device = btDeviceArray.get(which);
+				connectAsyncTask = new ConnectAsyncTask();
 				connectAsyncTask.execute(device);
 			}
 		});		
@@ -265,7 +277,6 @@ public class MainActivity extends Activity {
 	
 	public boolean sendMessage(String message){
 		System.out.println("log - sendMessage : "+message);
-		OutputStream mmOutStream = null;
 		
 		try {
 			if(btSocket == null){
@@ -281,26 +292,44 @@ public class MainActivity extends Activity {
 			}
 			
 		} catch (IOException e) { 
-			System.out.println("log - sendMessage ERROR : "+e.getMessage());				
+			System.out.println("log - sendMessage ERROR : "+e.getMessage());
+			Toast.makeText(this, R.string.lost_connection, Toast.LENGTH_SHORT).show();
+
 		}
 		return false;
 	}
-	
+	OutputStream mmOutStream = null;
+
+	private BluetoothSocket mmSocket;
+	private BluetoothDevice mmDevice;
 	class ConnectAsyncTask extends AsyncTask<BluetoothDevice, Integer, BluetoothSocket>{
-		private BluetoothSocket mmSocket;
-		private BluetoothDevice mmDevice;
+
 		
 		@Override
 		protected BluetoothSocket doInBackground(BluetoothDevice... device) {
 							
 			mmDevice = device[0];			
 			try {				
-				String mmUUID = "00001101-0000-1000-8000-00805F9B34FB";
-				mmSocket = mmDevice.createRfcommSocketToServiceRecord(UUID.fromString(mmUUID));
+				if(mmSocket != null){
+					mmOutStream.close();
+					mmOutStream = null;
+					mmSocket.close();
+					mmSocket = null;
+				}
+					String mmUUID = "00001101-0000-1000-8000-00805F9B34FB";
+					mmSocket = mmDevice.createRfcommSocketToServiceRecord(UUID.fromString(mmUUID));
+				
+				
+				
 				mmSocket.connect();
 				
 			} catch (Exception e) {
-				System.out.println(e.getMessage());				
+				System.out.println(e.getMessage());		
+				try {
+					mmSocket.close();
+				} catch (IOException e1) {
+					System.out.println(e1.getMessage());		
+				}
 			}			
 			return mmSocket;
 		}

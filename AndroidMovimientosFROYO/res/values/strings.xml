@@ -9,4 +9,8 @@
 	<string name="btn_bluetooth">Bluetooth</string>
 	<string name="dialog_not_have_bluetooth">Su dispositivo no cuenta con Bluetooth</string>
 	<string name="dialog_bluetooth_error">Ocurrió un error mientras se intentaba conectar a Bluetooth</string>
-</resources>
+	<string name="lost_connection">Se ha perdido la conexión, intente conectarse nuevamente</string>
+	<string name="closing_connection">Cerrando conexión...</string>
+	<string name="bluetooth_enable">Bluetooth está activado.</string>
+		
+</resources> 
