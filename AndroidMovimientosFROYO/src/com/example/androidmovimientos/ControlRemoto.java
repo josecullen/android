@@ -1,40 +1,26 @@
 package com.example.androidmovimientos;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Set;
-import java.util.UUID;
-
-import com.bluetooth.BluetoothActivity;
-import com.bluetooth.ConnectThread;
-import com.bluetooth.ConnectionThread;
-import com.bluetooth.ShowDevices;
-import com.sensor.Action;
-import com.sensor.SensorHelper;
-
-
-
-
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
 import android.content.Context;
-import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
-import android.widget.ArrayAdapter;
+import android.view.inputmethod.CompletionInfo;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.bluetooth.BluetoothActivity;
+import com.sensor.Action;
+import com.sensor.SensorHelper;
 
 public class ControlRemoto extends BluetoothActivity{
 
@@ -83,6 +69,7 @@ public class ControlRemoto extends BluetoothActivity{
 		txtReposoX.setText("version 0.1.2");
 		
 		txtMillis = (EditText)findViewById(R.id.txtMillis);
+		txtThreshold = (EditText)findViewById(R.id.txtThreshold);
 		
 		arrowForward = (ImageButton)findViewById(R.id.arrowForward);
 		arrowLeft = (ImageButton)findViewById(R.id.arrowLeft);
@@ -90,8 +77,14 @@ public class ControlRemoto extends BluetoothActivity{
 		
 		seekVisualizacion = (SeekBar)findViewById(R.id.seekVisualizacion);		
 		seekVisualizacion.setProgress(50);
-
+		sensorHelper = new SensorHelper((SensorManager) getSystemService(Context.SENSOR_SERVICE));
 		setSensor();	
+		
+		txtMillis.setText(""+sensorHelper.getMillis());
+		txtThreshold.setText(""+(int)sensorHelper.getThreshold());
+
+		txtMillis.addTextChangedListener(millisTextWatcher);
+		txtThreshold.addTextChangedListener(thresholdTextWatcher);
 	}
 	
 	public void filter(View view){	sensorHelper.filter.filter();	}
@@ -103,12 +96,52 @@ public class ControlRemoto extends BluetoothActivity{
 	public void addThreshold(View view)	 {	sensorHelper.setThreshold(sensorHelper.getThreshold() + 1);	}
 	public void minusThreshold(View view){	sensorHelper.setThreshold(sensorHelper.getThreshold() -1);	}
 
+	
+	
+	TextWatcher millisTextWatcher = new TextWatcher() {
+		
+		@Override
+		public void onTextChanged(CharSequence s, int start, int before, int count) {		}
+		
+		@Override
+		public void beforeTextChanged(CharSequence s, int start, int count,	int after) {	}
+		
+		@Override
+		public void afterTextChanged(Editable s) {
+			if(s.toString() != "" && s != null && s.toString().length() > 0){
+				
+				int millis = Integer.parseInt(s.toString());
+				if(millis >= 50 && millis <= 5000){
+					sensorHelper.setMillis(millis);
+				}
+			}			
+		}
+	};
+	TextWatcher thresholdTextWatcher = new TextWatcher() {
+		
+		@Override
+		public void onTextChanged(CharSequence s, int start, int before, int count) {		}
+		
+		@Override
+		public void beforeTextChanged(CharSequence s, int start, int count,	int after) {	}
+		
+		@Override
+		public void afterTextChanged(Editable s) {
+			if(s.toString() != "" && s != null && s.toString().length() > 0){
+				int threshold = Integer.parseInt(s.toString());
+				sensorHelper.setThreshold(threshold);
+			}				
+		}
+	};
+
+	
+	
+	
 	/**
 	 * Esta parte es muy importante, ya que setea el sensor de Acelerómetro que luego se comunicará con 
 	 * el dispositivo bluetooth para mandarle instrucciones.
 	 */
 	private void setSensor(){
-		sensorHelper = new SensorHelper((SensorManager) getSystemService(Context.SENSOR_SERVICE));
 		sensorHelper
 			.setMillis(200)
 			.setSensor(Sensor.TYPE_ACCELEROMETER)

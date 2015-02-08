@@ -59,6 +59,7 @@ public class BluetoothActivity extends Activity {
 		}
 	}
 	
+	
 	/**
 	 * Genera una lista de los dispositivos vinculados y se la pasa a un Intent para que la muestre y maneje la selección.
 	 * @param view

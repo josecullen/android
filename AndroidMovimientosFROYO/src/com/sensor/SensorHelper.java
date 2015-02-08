@@ -11,11 +11,6 @@ public class SensorHelper implements SensorEventListener{
 	private SensorManager senSensorManager;
 	private Sensor sen;
 	
-//	private int filterBufferLength = 20;
-	
-//	int countFilter = filterBufferLength;
-//	float[][] filters = new float[3][filterBufferLength];	
-	
 	int type = 1;
 	long millis = 0;
 	double shakeThreshold = 0;
@@ -68,7 +63,7 @@ public class SensorHelper implements SensorEventListener{
 				
 				float speed = Math.abs(x + y + z - lastX - lastY - lastZ) / diffTime * 10000;
 				
-				if(speed > shakeThreshold){
+				if(speed > shakeThreshold || lastCurrentTime == 0 || currentTime == 0){
 					lastCurrentTime = currentTime;
 					action.action();
 				}	
@@ -107,41 +102,6 @@ public class SensorHelper implements SensorEventListener{
 		return shakeThreshold; 
 	}	
 
-//	private void filtering(float x, float y, float z){
-//		if(countFilter >= filterBufferLength){
-//			return;
-//		}else{
-//			if(countFilter >= 0 && countFilter < filterBufferLength){
-//				filters[0][countFilter] = x;
-//				filters[1][countFilter] = y;
-//				filters[2][countFilter] = z;
-//			}
-//			countFilter++;	
-//
-//			for(float f : filters[0])	filterX += f;			
-//			for(float f : filters[1])	filterY += f;
-//			for(float f : filters[2])	filterZ += f;
-//			
-//			filterX = filterX / filterBufferLength;
-//			filterY = filterY / filterBufferLength;
-//			filterZ = filterZ / filterBufferLength;
-//		}		
-//	}
-//
-//	public void filter(){
-//		filterX = 0;
-//		filterY = 0;
-//		filterZ = 0;
-//		countFilter = -5;
-//	}
-//	
-//	public SensorHelper setFilterBufferLength(int newLength){
-//		filterBufferLength = newLength;
-//		filters = new float[3][filterBufferLength];
-//		countFilter = newLength;
-//		return this;
-//	}
-	
 	@Override
 	public String toString(){
 		StringBuilder s = new StringBuilder();
