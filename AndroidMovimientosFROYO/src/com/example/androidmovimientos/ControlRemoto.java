@@ -96,10 +96,7 @@ public class ControlRemoto extends BluetoothActivity{
 	public void addThreshold(View view)	 {	sensorHelper.setThreshold(sensorHelper.getThreshold() + 1);	}
 	public void minusThreshold(View view){	sensorHelper.setThreshold(sensorHelper.getThreshold() -1);	}
 
-	
-	
-	TextWatcher millisTextWatcher = new TextWatcher() {
-		
+	TextWatcher millisTextWatcher = new TextWatcher() {		
 		@Override
 		public void onTextChanged(CharSequence s, int start, int before, int count) {		}
 		
@@ -132,9 +129,7 @@ public class ControlRemoto extends BluetoothActivity{
 				sensorHelper.setThreshold(threshold);
 			}				
 		}
-	};
-
-	
+	};	
 	
 	
 	/**
@@ -169,11 +164,11 @@ public class ControlRemoto extends BluetoothActivity{
 					txtReposoZ.setText(df.format(sensorHelper.filter.filterZ));
 							
 					setArrows();
-					if(mBluetoothConnection != null){
+					if(bluetoothConnection != null){
 						String temp = "x"+df.format(sensorHelper.getX())+","+
 								"y"+df.format(sensorHelper.getY())+","+
 								"z"+df.format(sensorHelper.getZ())+"_"	;
-						mBluetoothConnection.write(temp.getBytes());
+						bluetoothConnection.write(temp.getBytes());
 					}
 
 				}
@@ -196,8 +191,9 @@ public class ControlRemoto extends BluetoothActivity{
 						else arrowForward.setAlpha(.5f);
 					}	
 				}
-				
 			});	
+		
+		
 	}
 	
 	

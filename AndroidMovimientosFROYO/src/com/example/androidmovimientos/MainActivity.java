@@ -190,7 +190,6 @@ public class MainActivity extends Activity {
 
             if (BluetoothAdapter.ACTION_STATE_CHANGED.equals(action)) {
                 if(intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, -1) == BluetoothAdapter.STATE_OFF){
-//                 	Bluetooth is disconnected
                 	System.out.println("DESCONECTADO");
                 }              	
                 	
@@ -276,8 +275,6 @@ public class MainActivity extends Activity {
 	}
 	
 	public boolean sendMessage(String message){
-		System.out.println("log - sendMessage : "+message);
-		
 		try {
 			if(btSocket == null){
 				System.out.println("log - socket null");
@@ -289,15 +286,15 @@ public class MainActivity extends Activity {
 				return true;
 			}else{
 				System.out.println("log - remoteDevice null");
-			}
-			
+			}			
 		} catch (IOException e) { 
 			System.out.println("log - sendMessage ERROR : "+e.getMessage());
 			Toast.makeText(this, R.string.lost_connection, Toast.LENGTH_SHORT).show();
-
 		}
 		return false;
 	}
+	
+	
 	OutputStream mmOutStream = null;
 
 	private BluetoothSocket mmSocket;

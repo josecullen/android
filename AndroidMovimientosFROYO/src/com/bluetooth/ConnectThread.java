@@ -10,29 +10,29 @@ import android.bluetooth.BluetoothSocket;
 import android.os.Handler;
 
 public class ConnectThread extends Thread {
-	private BluetoothSocket mBluetoothSocket;
-	private final BluetoothDevice mDevice;
-	private final BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-	private final Handler mHandler;
+	private BluetoothSocket bluetoothSocket;
+	private final BluetoothDevice bluetoothDevice;
+	private final BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+	private final Handler handler;
 
 	public ConnectThread(String deviceID, Handler handler) {
-		mDevice = mBluetoothAdapter.getRemoteDevice(deviceID);
-		mHandler = handler;
+		bluetoothDevice = bluetoothAdapter.getRemoteDevice(deviceID);
+		this.handler = handler;
 		try {
-			mBluetoothSocket = mDevice.createRfcommSocketToServiceRecord(BluetoothActivity.APP_UUID);
+			bluetoothSocket = bluetoothDevice.createRfcommSocketToServiceRecord(BluetoothActivity.APP_UUID);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
 	public void run() {
-		mBluetoothAdapter.cancelDiscovery();
+		bluetoothAdapter.cancelDiscovery();
 		try {
-			mBluetoothSocket.connect();
+			bluetoothSocket.connect();
 			manageConnectedSocket();
 		} catch (IOException connectException) {
 			try {
-				mBluetoothSocket.close();
+				bluetoothSocket.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -40,14 +40,14 @@ public class ConnectThread extends Thread {
 	}
 
 	private void manageConnectedSocket() {
-		ConnectionThread conn = new ConnectionThread(mBluetoothSocket, mHandler);
-		mHandler.obtainMessage(BluetoothActivity.SOCKET_CONNECTED, conn).sendToTarget();
+		ConnectionThread conn = new ConnectionThread(bluetoothSocket, handler);
+		handler.obtainMessage(BluetoothActivity.SOCKET_CONNECTED, conn).sendToTarget();
 		conn.start();
 	}
 	
 	public void cancel() {
 		try {
-			mBluetoothSocket.close();
+			bluetoothSocket.close();
 		} catch (IOException e) {
 		}
 	}

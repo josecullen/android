@@ -10,18 +10,18 @@ import android.bluetooth.BluetoothSocket;
 import android.os.Handler;
 
 public class ConnectionThread extends Thread {
-	BluetoothSocket mBluetoothSocket;
-	private final Handler mHandler;
-	private InputStream mInStream;
-	private OutputStream mOutStream;
+	BluetoothSocket bluetoothSocket;
+	private final Handler handler;
+	private InputStream inStream;
+	private OutputStream outStream;
 
 	ConnectionThread(BluetoothSocket socket, Handler handler){
 		super();
-		mBluetoothSocket = socket;
-		mHandler = handler;
+		bluetoothSocket = socket;
+		this.handler = handler;
 		try {
-			mInStream = mBluetoothSocket.getInputStream();
-			mOutStream = mBluetoothSocket.getOutputStream();
+			inStream = bluetoothSocket.getInputStream();
+			outStream = bluetoothSocket.getOutputStream();
 		} catch (IOException e) {
 		}
 	}
@@ -32,9 +32,9 @@ public class ConnectionThread extends Thread {
 			int bytes;
 		while (true) {
 			try {
-				bytes = mInStream.read(buffer);
+				bytes = inStream.read(buffer);
 				String data = new String(buffer, 0, bytes);
-				mHandler.obtainMessage(
+				handler.obtainMessage(
 						ControlRemoto.DATA_RECEIVED,
 						data).sendToTarget();
 			} catch (IOException e) {
@@ -45,7 +45,7 @@ public class ConnectionThread extends Thread {
 
 	public void write(byte[] bytes) {
 		try {
-			mOutStream.write(bytes);
+			outStream.write(bytes);
 		} catch (IOException e) {
 			
 		}

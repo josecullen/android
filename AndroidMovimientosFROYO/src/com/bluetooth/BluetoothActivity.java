@@ -22,8 +22,8 @@ public class BluetoothActivity extends Activity {
 	public static final int SOCKET_CONNECTED = 3;
 	public static final int SELECT_BLUETOOTH_DEVICE = 4;
 	public static final UUID APP_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
-	protected BluetoothAdapter mBluetoothAdapter = null;
-	protected ConnectionThread mBluetoothConnection = null;
+	protected BluetoothAdapter bluetoothAdapter = null;
+	protected ConnectionThread bluetoothConnection = null;
 	private ConnectThread connectThread;
 	protected String data;
 
@@ -31,7 +31,7 @@ public class BluetoothActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		// Obtenemos el bluetooth del dispositivo.
-		mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+		bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 		// vemos si el dispositivo tiene Bluetooth y si está habilitado.
 		checkBluetoothEnable();
 	}
@@ -52,10 +52,24 @@ public class BluetoothActivity extends Activity {
 	protected void onDestroy() {
 		super.onDestroy();
 		if(connectThread != null){
-			mBluetoothAdapter.cancelDiscovery();
+			bluetoothAdapter.cancelDiscovery();
 			connectThread.cancel();
 			connectThread = null;
-			mBluetoothConnection = null;
+			bluetoothConnection = null;
+		}
+	}
+	
+	/**
+	 * Chequeamos que el dispositivo tiene Bluetooth y que está activado. 
+	 * Si no está activado, preguntamos si desea activarlo.
+	 */
+	private void checkBluetoothEnable(){
+		if (bluetoothAdapter == null) {
+		    Toast.makeText(this, "El dispositivo no soporta Bluetooth", Toast.LENGTH_LONG).show();
+		}
+		if(!bluetoothAdapter.isEnabled()){
+			Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+			startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
 		}
 	}
 	
@@ -65,7 +79,7 @@ public class BluetoothActivity extends Activity {
 	 * @param view
 	 */
 	public void selectBluetooth(View view){
-		Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();;
+		Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();;
 		ArrayList<String> pairedDeviceStrings = new ArrayList<String>();
 		
 		if (pairedDevices.size() > 0) {
@@ -80,16 +94,16 @@ public class BluetoothActivity extends Activity {
 	
 	
 	private void connectToBluetoothServer(String id) {
-		connectThread = new ConnectThread(id, mHandler);
+		connectThread = new ConnectThread(id, handler);
 		connectThread.start();
 	}
 	
-	public Handler mHandler = new Handler() {
+	public Handler handler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 			case SOCKET_CONNECTED: {
-				mBluetoothConnection = (ConnectionThread) msg.obj;
+				bluetoothConnection = (ConnectionThread) msg.obj;
 				break;
 			}
 			case DATA_RECEIVED: {
@@ -101,19 +115,7 @@ public class BluetoothActivity extends Activity {
 		}
 	};
 	
-	/**
-	 * Chequeamos que el dispositivo tiene Bluetooth y que está activado. 
-	 * Si no está activado, preguntamos si desea activarlo.
-	 */
-	private void checkBluetoothEnable(){
-		if (mBluetoothAdapter == null) {
-		    Toast.makeText(this, "El dispositivo no soporta Bluetooth", Toast.LENGTH_LONG).show();
-		}
-		if(!mBluetoothAdapter.isEnabled()){
-			Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-			startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-		}
-	}
+
 	
 	
 }
